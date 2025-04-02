@@ -1,0 +1,8 @@
+#!/home/ilias/Documents/M1_ESGI/S1/ProjetAnnuel/SmartEnviro-Projet-Annuel-2025/backend/env/bin/python
+# -*- coding: utf-8 -*-
+import re
+import sys
+from dotenv.__main__ import cli
+if __name__ == '__main__':
+    sys.argv[0] = re.sub(r'(-script\.pyw|\.exe)?$', '', sys.argv[0])
+    sys.exit(cli())
