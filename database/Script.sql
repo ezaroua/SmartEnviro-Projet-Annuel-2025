@@ -27,6 +27,8 @@ CREATE TABLE IF NOT EXISTS `users` (
   `receive_alerts` tinyint(1) NOT NULL DEFAULT 1,
   `preferred_district` varchar(100) DEFAULT NULL,
   `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `is_staff` tinyint(1) NOT NULL DEFAULT 0,
+  `is_superuser` tinyint(1) NOT NULL DEFAULT 0,
   `date_joined` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `last_login` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -40,3 +42,8 @@ CREATE TABLE IF NOT EXISTS `users` (
 INSERT INTO `role` (`name`, `description`) VALUES
 ('admin', 'Administrateur avec accès complet au système'),
 ('citizen', 'Citoyen avec accès limité aux fonctionnalités de consultation');
+
+-- Mettre à jour les utilisateurs admin existants pour avoir les privilèges superuser
+UPDATE users 
+SET is_superuser = 1, is_staff = 1 
+WHERE role_id = (SELECT id FROM role WHERE name = 'admin');
