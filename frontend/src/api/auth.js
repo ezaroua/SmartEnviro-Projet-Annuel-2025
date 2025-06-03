@@ -32,6 +32,7 @@ export const useAuthStore = defineStore('auth', {
         
         // Charger le profil de l'utilisateur
         await this.fetchUserProfile()
+        router.push('/dashboard')
         
         return true
       } catch (error) {
