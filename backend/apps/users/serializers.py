@@ -1,51 +1,107 @@
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from .models import Role
+from django.contrib.auth import password_validation
 
 User = get_user_model()
 
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id', 'username', 'email', 'first_name', 'last_name', 
-                 'role', 'phone_number', 'address', 'preferred_district', 
-                 'receive_alerts', 'is_active', 'date_joined']
-        read_only_fields = ['id', 'date_joined']
+# ─────────  A)  Sérialiseur JWT  ─────────────────────────────────
+class CustomTokenSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        token["role_id"] = user.role_id   # 1 admin / 2 citizen
+        return token
 
-class RegisterSerializer(serializers.Serializer):
-    username = serializers.CharField(max_length=150)
-    email = serializers.EmailField()
-    password = serializers.CharField(write_only=True)
-    password2 = serializers.CharField(write_only=True)
-    first_name = serializers.CharField(max_length=150, required=False, allow_blank=True)
-    last_name = serializers.CharField(max_length=150, required=False, allow_blank=True)
-    phone_number = serializers.CharField(max_length=15, required=False, allow_blank=True)
-    address = serializers.CharField(required=False, allow_blank=True)
-    preferred_district = serializers.CharField(max_length=100, required=False, allow_blank=True)
-    receive_alerts = serializers.BooleanField(default=True)
-    
-    def validate(self, data):
-        if data['password'] != data['password2']:
-            raise serializers.ValidationError({"password": "Les mots de passe ne correspondent pas"})
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        data["role_id"] = self.user.role_id
         return data
-    
+
+
+# ─────────  B)  Lecture d'utilisateur  ──────────────────────────
+class UserSerializer(serializers.ModelSerializer):
+    role_id   = serializers.IntegerField(source='role.id',   read_only=True)
+    role_name = serializers.CharField( source='role.name',   read_only=True)
+
+    class Meta:
+        model  = User
+        fields = [
+            'id', 'username', 'email', 'first_name', 'last_name',
+            'role_id', 'role_name',
+            'phone_number', 'address', 'preferred_district',
+            'receive_alerts', 'is_active', 'date_joined'
+        ]
+        read_only_fields = ('id', 'date_joined', 'role_id', 'role_name', 'is_active')
+
+
+# ─────────  C)  Inscription  ────────────────────────────────────
+class RegisterSerializer(serializers.ModelSerializer):
+    password2 = serializers.CharField(write_only=True, label='Confirmation')
+
+    class Meta:
+        model  = User
+        fields = [
+            'username', 'email', 'password', 'password2',
+            'first_name', 'last_name', 'phone_number',
+            'address', 'preferred_district', 'receive_alerts'
+        ]
+        extra_kwargs = {
+            'password': {'write_only': True, 'min_length': 8},
+            'email':    {'required': True},
+            'username': {'required': True},
+        }
+
+    def validate(self, attrs):
+        if attrs['password'] != attrs['password2']:
+            raise serializers.ValidationError({'password': 'Les mots de passe ne correspondent pas'})
+        return attrs
+
     def create(self, validated_data):
         validated_data.pop('password2')
-        
-        citizen_role = Role.objects.get(name='citizen')
-        
-        # Créer l'utilisateur
-        user = User.objects.create_user(
-            username=validated_data['username'],
-            email=validated_data['email'],
-            password=validated_data['password'],
-            first_name=validated_data.get('first_name', ''),
-            last_name=validated_data.get('last_name', ''),
-            phone_number=validated_data.get('phone_number', ''),
-            address=validated_data.get('address', ''),
-            preferred_district=validated_data.get('preferred_district', ''),
-            receive_alerts=validated_data.get('receive_alerts', True),
-            role=citizen_role
-        )
-        
+        citizen_role = Role.objects.filter(name='citizen').first()
+        if not citizen_role:
+            raise serializers.ValidationError({'role': "Le rôle 'citizen' est introuvable"})
+        return User.objects.create_user(**validated_data, role=citizen_role)
+
+class ProfileSerializer(serializers.ModelSerializer):
+    """Lecture / mise à jour basique du profil connecté"""
+    role_id   = serializers.IntegerField(source='role.id',   read_only=True)
+    role_name = serializers.CharField( source='role.name',   read_only=True)
+
+    class Meta:
+        model  = User
+        fields = [
+            'id', 'username', 'email',
+            'first_name', 'last_name',
+            'phone_number', 'address',
+            'preferred_district', 'receive_alerts',
+            'role_id', 'role_name',
+            'date_joined'
+        ]
+        read_only_fields = ('id', 'username', 'role_id', 'role_name', 'date_joined')
+
+class PasswordChangeSerializer(serializers.Serializer):
+    old_password      = serializers.CharField(write_only=True)
+    new_password      = serializers.CharField(write_only=True, min_length=8)
+    new_password_conf = serializers.CharField(write_only=True)
+
+    def validate_old_password(self, value):
+        user = self.context['request'].user
+        if not user.check_password(value):
+            raise serializers.ValidationError("Ancien mot de passe incorrect")
+        return value
+
+    def validate(self, attrs):
+        if attrs['new_password'] != attrs['new_password_conf']:
+            raise serializers.ValidationError({"new_password":"Les mots de passe ne correspondent pas"})
+        # règles Django (complexité, etc.)
+        password_validation.validate_password(attrs['new_password'], self.context['request'].user)
+        return attrs
+
+    def save(self, **kwargs):
+        user = self.context['request'].user
+        user.set_password(self.validated_data['new_password'])
+        user.save()
         return user
