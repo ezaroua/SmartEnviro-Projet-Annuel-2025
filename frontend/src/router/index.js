@@ -49,7 +49,15 @@ const routes = [
       { path: '', name: 'dashboard-admin', component: DashboardAdmin },
       { path: 'profile', name: 'admin-profile', component: ProfileView } 
     ]
+  },
+
+  {
+  path: '/alerts',
+  name: 'alerts',
+  component: () => import('@/views/citizen/AlertsView.vue'),
+  meta: { requiresAuth: true, role: 'citizen' }
   }
+
 ]
 
 const router = createRouter({
