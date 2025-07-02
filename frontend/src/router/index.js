@@ -13,9 +13,10 @@ import RegisterView      from '@/views/RegisterView.vue'
 /* Pages citoyen */
 import DashboardCitizen  from '@/views/citizen/DashboardView.vue'
 import ProfileView       from '@/views/ProfileView.vue'
-
+import AlertsCitizen     from '@/views/citizen/AlertsView.vue'
 /* Pages admin */
 import DashboardAdmin    from '@/views/admin/AdminDashboard.vue'
+
 
 const routes = [
   // Pages publiques
@@ -36,10 +37,12 @@ const routes = [
     meta: { requiresAuth: true, role: 'citizen' },
     children: [
       { path: '', name: 'dashboard-citizen', component: DashboardCitizen },
-      { path: 'profile', name: 'citizen-profile', component: ProfileView } 
+      { path: 'profile', name: 'citizen-profile', component: ProfileView },
+      { path: 'alerts', name: 'Citizen-alerts', component: AlertsCitizen } ,
     ]
   },
 
+  
   // Dashboard admin
   {
     path: '/dashboardAdmin',
@@ -51,12 +54,8 @@ const routes = [
     ]
   },
 
-  {
-  path: '/alerts',
-  name: 'alerts',
-  component: () => import('@/views/citizen/AlertsView.vue'),
-  meta: { requiresAuth: true, role: 'citizen' }
-  }
+  
+ 
 
 ]
 

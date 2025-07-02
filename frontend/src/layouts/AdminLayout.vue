@@ -1,6 +1,6 @@
 <template>
-  <div class="d-flex">
-    <aside class="bg-dark text-white p-3 vh-100" style="width:240px">
+  <div class="d-flex min-vh-100">
+    <aside class="bg-dark text-white p-3 d-flex flex-column" style="width:240px; min-height: 100%;">
       <h4 class="text-center mb-4">Admin</h4>
       <ul class="nav flex-column gap-2">
         <li><router-link class="nav-link text-white" to="/dashboardAdmin">Dashboard</router-link></li>

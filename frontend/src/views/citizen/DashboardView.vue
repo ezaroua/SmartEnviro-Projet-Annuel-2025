@@ -37,6 +37,9 @@
                  label="Vent" :value="wind + ' km/h'"/>
       <Indicator icon="bi-cloud-drizzle" color="secondary"
                  label="Pluie aujourd'hui" :value="precipToday + ' mm'"/>
+      <Indicator icon="bi-cloud-rain" color="warning"
+           label="Précipitations demain" :value="precipTomorrow + ' %'"/>
+
     </div>
 
     <!-- Graph précipitations 7 jours -->
@@ -99,13 +102,13 @@ const error = ref(null)
 
 // Fonction pour sélectionner une ville
 function selectCity(cityName) {
-  console.log(`🎯 Sélection manuelle de: ${cityName}`)
+  console.log(`Sélection manuelle de: ${cityName}`)
   selectedCityName.value = cityName
 }
 
 // Fonction pour gérer le changement de ville via le select
 function onCityChange() {
-  console.log(`🔽 Changement via select: ${selectedCityName.value}`)
+  console.log(` Changement via select: ${selectedCityName.value}`)
 }
 
 // Fonction pour récupérer les données météo
@@ -117,7 +120,7 @@ async function fetchWeatherData() {
   
   try {
     const city = selectedCity.value
-    console.log(`🌤️ Récupération météo pour ${city.name} (lat: ${city.lat}, lon: ${city.lon})`)
+    console.log(` Récupération météo pour ${city.name} (lat: ${city.lat}, lon: ${city.lon})`)
     
     const response = await axios.get('http://localhost:8000/api/weather/', {
       params: { 
@@ -126,11 +129,11 @@ async function fetchWeatherData() {
       }
     })
     
-    console.log(`✅ Données reçues pour ${city.name}:`, response.data)
+    console.log(` Données reçues pour ${city.name}:`, response.data)
     weatherData.value = response.data
     
   } catch (err) {
-    console.error(`❌ Erreur API pour ${selectedCity.value.name}:`, err)
+    console.error(` Erreur API pour ${selectedCity.value.name}:`, err)
     error.value = `Impossible de récupérer les données météo pour ${selectedCity.value.name}`
     weatherData.value = null
   } finally {
@@ -140,12 +143,12 @@ async function fetchWeatherData() {
 
 // Watcher pour détecter le changement de ville
 watch(selectedCityName, async (newCityName, oldCityName) => {
-  console.log(`🔄 Changement de ville: ${oldCityName} → ${newCityName}`)
+  console.log(` Changement de ville: ${oldCityName} → ${newCityName}`)
   await fetchWeatherData()
   
   // Centrer la carte sur la nouvelle ville
   if (map && selectedCity.value) {
-    console.log(`🗺️ Centrage carte sur ${selectedCity.value.name}`)
+    console.log(` Centrage carte sur ${selectedCity.value.name}`)
     map.setView([selectedCity.value.lat, selectedCity.value.lon], 9)
   }
 })
@@ -157,7 +160,7 @@ onMounted(async () => {
   await nextTick()
   
   // Chargement initial des données
-  console.log('🚀 Chargement initial des données')
+  console.log('Chargement initial des données')
   await fetchWeatherData()
   
   // Initialisation de la carte
@@ -173,10 +176,10 @@ onMounted(async () => {
       .bindPopup(`<strong>${city.name}</strong><br>Cliquez pour voir la météo`)
       
     marker.on('click', () => {
-      console.log(`🗺️ Clic sur marqueur: ${city.name}`)
-      console.log(`📍 Avant changement: ${selectedCityName.value}`)
+      console.log(`Clic sur marqueur: ${city.name}`)
+      console.log(` Avant changement: ${selectedCityName.value}`)
       selectedCityName.value = city.name
-      console.log(`📍 Après changement: ${selectedCityName.value}`)
+      console.log(`Après changement: ${selectedCityName.value}`)
     })
     
     markers.push(marker)
@@ -215,7 +218,7 @@ const hasValidChartData = computed(() => {
 // Graphique des précipitations sur 7 jours
 const rainChart = computed(() => {
   if (!hasValidChartData.value) {
-    console.log('❌ Pas de données de précipitation disponibles')
+    console.log(' Pas de données de précipitation disponibles')
     return {
       labels: [],
       datasets: []
@@ -225,8 +228,8 @@ const rainChart = computed(() => {
   const precipData = weatherData.value.daily.precipitation_sum
   const timeData = weatherData.value.daily.time
   
-  console.log('📊 Données précipitations:', precipData)
-  console.log('📅 Données dates:', timeData)
+  console.log('Données précipitations:', precipData)
+  console.log('Données dates:', timeData)
   
   const labels = timeData.map(date => {
     const d = new Date(date)
