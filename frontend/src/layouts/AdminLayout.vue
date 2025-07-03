@@ -5,7 +5,7 @@
       <ul class="nav flex-column gap-2">
         <li><router-link class="nav-link text-white" to="/dashboardAdmin">Dashboard</router-link></li>
          <li><router-link class="nav-link text-white" to="/dashboardAdmin/profile">Profil</router-link></li>
-        <li><router-link class="nav-link text-white" to="/admin/users">Utilisateurs</router-link></li>
+        <li><router-link class="nav-link text-white" to="/dashboardAdmin/users">Utilisateurs</router-link></li>
         <li><router-link class="nav-link text-white" to="/admin/stations">Stations</router-link></li>
         <li><router-link class="nav-link text-white" to="/admin/thresholds">Seuils</router-link></li>
         <li><router-link class="nav-link text-white" to="/admin/logs">Logs</router-link></li>

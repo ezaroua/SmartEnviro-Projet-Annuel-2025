@@ -16,6 +16,7 @@ import ProfileView       from '@/views/ProfileView.vue'
 import AlertsCitizen     from '@/views/citizen/AlertsView.vue'
 /* Pages admin */
 import DashboardAdmin    from '@/views/admin/AdminDashboard.vue'
+import UsersAdmin    from '@/views/admin/UsersView.vue'
 
 
 const routes = [
@@ -50,7 +51,8 @@ const routes = [
     meta: { requiresAuth: true, role: 'admin' },
     children: [
       { path: '', name: 'dashboard-admin', component: DashboardAdmin },
-      { path: 'profile', name: 'admin-profile', component: ProfileView } 
+      { path: 'profile', name: 'admin-profile', component: ProfileView },
+      { path: 'users', name: 'admin-users', component: UsersAdmin }
     ]
   },
 
