@@ -3,20 +3,23 @@
     <div class="card">
       <h2 class="card-header">Inscription</h2>
       <div class="card-body">
+        <!-- Message de succès -->
         <div v-if="registrationSuccess" class="success-message">
           <div class="alert alert-success mb-4">
-            Inscription réussie! Vous pouvez maintenant vous connecter.
+            Inscription réussie ! Vous pouvez maintenant vous connecter.
           </div>
           <div class="d-grid">
-            <button class="btn btn-primary" @click="$emit('navigate', 'login')">
+            <button class="btn btn-primary" @click="goToLogin">
               Aller à la page de connexion
             </button>
+
           </div>
         </div>
-        
+
+        <!-- Formulaire -->
         <form v-else @submit.prevent="handleRegister">
           <div class="alert alert-danger" v-if="errorMessage">{{ errorMessage }}</div>
-          
+
           <div class="row">
             <div class="col-md-6 mb-3">
               <label for="username">Nom d'utilisateur*</label>
@@ -29,7 +32,7 @@
                 placeholder="Choisissez un nom d'utilisateur"
               />
             </div>
-            
+
             <div class="col-md-6 mb-3">
               <label for="email">Email*</label>
               <input
@@ -42,7 +45,7 @@
               />
             </div>
           </div>
-          
+
           <div class="row">
             <div class="col-md-6 mb-3">
               <label for="first_name">Prénom</label>
@@ -54,7 +57,7 @@
                 placeholder="Votre prénom"
               />
             </div>
-            
+
             <div class="col-md-6 mb-3">
               <label for="last_name">Nom</label>
               <input
@@ -66,7 +69,7 @@
               />
             </div>
           </div>
-          
+
           <div class="row">
             <div class="col-md-6 mb-3">
               <label for="password">Mot de passe*</label>
@@ -79,7 +82,7 @@
                 placeholder="Choisissez un mot de passe"
               />
             </div>
-            
+
             <div class="col-md-6 mb-3">
               <label for="password2">Confirmer le mot de passe*</label>
               <input
@@ -92,7 +95,7 @@
               />
             </div>
           </div>
-          
+
           <div class="mb-3">
             <label for="phone_number">Téléphone (optionnel)</label>
             <input
@@ -103,7 +106,7 @@
               placeholder="Votre numéro de téléphone"
             />
           </div>
-          
+
           <div class="mb-3">
             <label for="address">Adresse (optionnel)</label>
             <textarea
@@ -114,7 +117,7 @@
               placeholder="Votre adresse"
             ></textarea>
           </div>
-          
+
           <div class="mb-3">
             <label for="preferred_district">Quartier préféré (optionnel)</label>
             <input
@@ -125,7 +128,7 @@
               placeholder="Votre quartier d'intérêt"
             />
           </div>
-          
+
           <div class="form-check mb-3">
             <input
               type="checkbox"
@@ -137,14 +140,14 @@
               Recevoir des alertes
             </label>
           </div>
-          
+
           <div class="mb-3">
             <button class="btn btn-primary w-100" type="submit" :disabled="isLoading">
               <span v-if="isLoading" class="spinner-border spinner-border-sm me-2"></span>
               S'inscrire
             </button>
           </div>
-          
+
           <div class="text-center">
             Vous avez déjà un compte ?
             <a href="#" @click.prevent="$emit('navigate', 'login')">Connectez-vous ici</a>
@@ -158,7 +161,12 @@
 <script setup>
 import { ref } from 'vue'
 import axios from 'axios'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
+function goToLogin() {
+  router.push('/login')
+}
 
 const emit = defineEmits(['navigate'])
 
@@ -174,51 +182,39 @@ const userData = ref({
   preferred_district: '',
   receive_alerts: true
 })
+
 const errorMessage = ref('')
 const isLoading = ref(false)
 const registrationSuccess = ref(false)
 
 const handleRegister = async () => {
+  errorMessage.value = ''
 
   if (userData.value.password !== userData.value.password2) {
-    errorMessage.value = 'Les mots de passe ne correspondent pas'
+    errorMessage.value = 'Les mots de passe ne correspondent pas.'
     return
   }
-  
-  if (userData.value.password.length < 8) {
-    errorMessage.value = 'Le mot de passe doit contenir au moins 8 caractères'
-    return
-  }
-  
 
-  if (!userData.value.email || !userData.value.username) {
-    errorMessage.value = "L'email et le nom d'utilisateur sont obligatoires"
+  if (userData.value.password.length < 8) {
+    errorMessage.value = 'Le mot de passe doit contenir au moins 8 caractères.'
     return
   }
-  
+
+  if (!userData.value.username || !userData.value.email) {
+    errorMessage.value = "Le nom d'utilisateur et l'email sont requis."
+    return
+  }
+
   try {
     isLoading.value = true
-    errorMessage.value = ''
-    
-    // Envoi des données d'inscription à l'API
-    const response = await axios.post('http://localhost:8000/api/register/', {
-      username: userData.value.username,
-      email: userData.value.email,
-      password: userData.value.password,
-      password2: userData.value.password2,
-      first_name: userData.value.first_name,
-      last_name: userData.value.last_name,
-      phone_number: userData.value.phone_number,
-      address: userData.value.address,
-      preferred_district: userData.value.preferred_district,
-      receive_alerts: userData.value.receive_alerts
-    })
-    
-    // Si l'inscription est réussie
-    if (response.data && response.data.success) {
+
+    const response = await axios.post('http://localhost:8000/api/register/', userData.value)
+
+    // Si le serveur répond avec 201 Created, considérer comme succès
+    if (response.status === 201) {
       registrationSuccess.value = true
-      
-      // Réinitialiser le formulaire
+
+      // Reset le formulaire
       userData.value = {
         username: '',
         email: '',
@@ -232,36 +228,22 @@ const handleRegister = async () => {
         receive_alerts: true
       }
     } else {
-      errorMessage.value = 'Une erreur est survenue lors de l\'inscription'
+      errorMessage.value = "Une erreur est survenue lors de l'inscription."
     }
-    
   } catch (error) {
-
-    if (error.response && error.response.data) {
-    
-      const errors = error.response.data.errors || error.response.data
-      
+    if (error.response?.data) {
+      const errors = error.response.data
       if (typeof errors === 'object') {
-      
         errorMessage.value = Object.entries(errors)
-          .map(([field, message]) => {
-            if (Array.isArray(message)) {
-              return `${field}: ${message.join(', ')}`
-            } else {
-              return `${field}: ${message}`
-            }
-          })
+          .map(([key, val]) => `${key}: ${Array.isArray(val) ? val.join(', ') : val}`)
           .join('\n')
       } else {
-        // Si les erreurs sont une chaîne de caractères
         errorMessage.value = String(errors)
       }
     } else if (error.request) {
-      
-      errorMessage.value = 'Impossible de contacter le serveur. Veuillez vérifier votre connexion internet.'
+      errorMessage.value = "Impossible de contacter le serveur."
     } else {
-   
-      errorMessage.value = 'Une erreur s\'est produite. Veuillez réessayer.'
+      errorMessage.value = "Une erreur inattendue s'est produite."
     }
   } finally {
     isLoading.value = false
