@@ -4,11 +4,11 @@
       <h4 class="text-center mb-4">Admin</h4>
       <ul class="nav flex-column gap-2">
         <li><router-link class="nav-link text-white" to="/dashboardAdmin">Dashboard</router-link></li>
-         <li><router-link class="nav-link text-white" to="/dashboardAdmin/profile">Profil</router-link></li>
+        <li><router-link class="nav-link text-white" to="/dashboardAdmin/profile">Profil</router-link></li>
         <li><router-link class="nav-link text-white" to="/dashboardAdmin/users">Utilisateurs</router-link></li>
-        <li><router-link class="nav-link text-white" to="/admin/stations">Stations</router-link></li>
-        <li><router-link class="nav-link text-white" to="/admin/thresholds">Seuils</router-link></li>
-        <li><router-link class="nav-link text-white" to="/admin/logs">Logs</router-link></li>
+        <li><router-link class="nav-link text-white" to="/dashboardAdmin/stations">Stations</router-link></li>
+        <li><router-link class="nav-link text-white" to="/dashboardAdmin/thresholds">Seuils</router-link></li>
+        <li><router-link class="nav-link text-white" to="/dashboardAdmin/logs">Logs</router-link></li>
         <li class="mt-auto">
           <button class="btn btn-outline-light w-100" @click="logout">Déconnexion</button>
         </li>

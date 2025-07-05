@@ -17,7 +17,9 @@ import AlertsCitizen     from '@/views/citizen/AlertsView.vue'
 /* Pages admin */
 import DashboardAdmin    from '@/views/admin/AdminDashboard.vue'
 import UsersAdmin    from '@/views/admin/UsersView.vue'
-
+import StationsView   from '@/views/admin/StationsView.vue'
+import ThresholdsView from '../views/admin/ThresholdsView.vue'
+import LogsView from '../views/admin/LogsView.vue'
 
 const routes = [
   // Pages publiques
@@ -39,7 +41,7 @@ const routes = [
     children: [
       { path: '', name: 'dashboard-citizen', component: DashboardCitizen },
       { path: 'profile', name: 'citizen-profile', component: ProfileView },
-      { path: 'alerts', name: 'Citizen-alerts', component: AlertsCitizen } ,
+      { path: 'alerts', name: 'Citizen-alerts', component: AlertsCitizen } 
     ]
   },
 
@@ -52,7 +54,10 @@ const routes = [
     children: [
       { path: '', name: 'dashboard-admin', component: DashboardAdmin },
       { path: 'profile', name: 'admin-profile', component: ProfileView },
-      { path: 'users', name: 'admin-users', component: UsersAdmin }
+      { path: 'users', name: 'admin-users', component: UsersAdmin },
+      { path: 'stations', name: 'admin-stations', component: StationsView },
+      { path: 'thresholds', name: 'admin-thresholds', component: ThresholdsView },
+      { path: 'logs', name: 'admin-logs', component: LogsView }
     ]
   },
 

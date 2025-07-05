@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     
     
     'apps.users',
+    'apps.stations', 
     #'apps.data',
     #'apps.prediction',
     #'apps.alerts',

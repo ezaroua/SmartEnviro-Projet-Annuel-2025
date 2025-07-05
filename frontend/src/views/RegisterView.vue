@@ -9,9 +9,10 @@
             Inscription réussie ! Vous pouvez maintenant vous connecter.
           </div>
           <div class="d-grid">
-            <button class="btn btn-primary" @click="$emit('navigate', 'login')">
+            <button class="btn btn-primary" @click="goToLogin">
               Aller à la page de connexion
             </button>
+
           </div>
         </div>
 
@@ -160,6 +161,12 @@
 <script setup>
 import { ref } from 'vue'
 import axios from 'axios'
+import { useRouter } from 'vue-router'
+const router = useRouter()
+
+function goToLogin() {
+  router.push('/login')
+}
 
 const emit = defineEmits(['navigate'])
 

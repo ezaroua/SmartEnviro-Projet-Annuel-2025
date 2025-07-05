@@ -34,7 +34,7 @@
             <td>{{ idx + 1 }}</td>
             <td>{{ user.username }}</td>
             <td>{{ user.email }}</td>
-            <td>{{ user.role }}</td>
+            <td>{{ user.role_name }}</td>
             <td>
               <span :class="user.is_active ? 'text-success' : 'text-danger'">
                 {{ user.is_active ? 'Oui' : 'Non' }}
@@ -130,7 +130,7 @@ function formatDate(dateString) {
 /* Filtrage selon rôle */
 const filteredUsers = computed(() => {
   if (!roleFilter.value) return users.value
-  return users.value.filter(user => user.role === roleFilter.value)
+  return users.value.filter(user => user.role_name.toLowerCase() === roleFilter.value)
 })
 
 onMounted(fetchUsers)

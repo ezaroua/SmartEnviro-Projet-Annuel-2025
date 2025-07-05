@@ -16,6 +16,12 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.contrib.auth import get_user_model  
 from rest_framework.permissions import AllowAny
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAdminUser
+from django.contrib.auth import get_user_model
+from django.utils import timezone
+from datetime import timedelta
 
 User = get_user_model()
 
@@ -82,3 +88,26 @@ class UserToggleActiveView(APIView):
             return Response({'success': True, 'is_active': user.is_active})
         except User.DoesNotExist:
             return Response({'error': 'Utilisateur non trouvé'}, status=status.HTTP_404_NOT_FOUND)
+        
+class AdminOverviewView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def get(self, request):
+        today = timezone.now().date()
+        last_7_days = [today - timedelta(days=i) for i in reversed(range(7))]
+        weekly_counts = [
+            User.objects.filter(date_joined__date=day).count() for day in last_7_days
+        ]
+
+        data = {
+            "total_users": User.objects.count(),
+            "admins": User.objects.filter(role__name='admin').count(),
+            "citizens": User.objects.filter(role__name='citizen').count(),
+            "active_users": User.objects.filter(is_active=True).count(),
+            "inactive_users": User.objects.filter(is_active=False).count(),
+            "weekly_registrations": weekly_counts,
+            "last_users": list(User.objects.order_by('-date_joined')[:5].values(
+                'id', 'username', 'email', 'date_joined'
+            )),
+        }
+        return Response(data)
