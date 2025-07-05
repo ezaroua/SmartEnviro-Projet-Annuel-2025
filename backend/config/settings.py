@@ -109,7 +109,11 @@ CORS_ALLOWED_ORIGINS = [
 
 # Production CORS settings
 if not DEBUG:
-    CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', '').split(',')
+    cors_origins = os.getenv('CORS_ALLOWED_ORIGINS', '')
+    if cors_origins:
+        CORS_ALLOWED_ORIGINS = [origin.strip() for origin in cors_origins.split(',') if origin.strip()]
+    else:
+        CORS_ALLOW_ALL_ORIGINS = True
     CORS_ALLOW_ALL_ORIGINS = os.getenv('CORS_ALLOW_ALL_ORIGINS', 'False') == 'True'
 
 CORS_ALLOW_CREDENTIALS = True
