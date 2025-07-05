@@ -1,0 +1,23 @@
+[variables]
+NIXPACKS_PYTHON_VERSION = "3.11"
+PORT = "8000"
+
+[phases.install]
+cmds = [
+    "pip install --upgrade pip",
+    "pip install -r requirements.txt"
+]
+
+[phases.build]
+cmds = [
+    "python manage.py collectstatic --noinput"
+]
+
+[phases.deploy]
+cmds = [
+    "python manage.py migrate --noinput",
+    "python manage.py init_db"
+]
+
+[start]
+cmd = "gunicorn --bind 0.0.0.0:${PORT:-8000} config.wsgi:application"

@@ -1,0 +1,15 @@
+[variables]
+NODE_VERSION = "18"
+
+[phases.install]
+cmds = [
+    "npm ci"
+]
+
+[phases.build]
+cmds = [
+    "npm run build"
+]
+
+[start]
+cmd = "npx serve -s dist -l $PORT"
