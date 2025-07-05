@@ -113,37 +113,3 @@ docker build -f Dockerfile.prod -t smartenviro-frontend-prod .
 docker run -p 80:80 smartenviro-frontend-prod
 ```
 
-## Railway Deployment
-
-### Prerequisites
-1. Install Railway CLI: `npm install -g @railway/cli`
-2. Login: `railway login`
-3. Create new project: `railway init`
-
-### Deploy Backend
-```bash
-cd backend
-railway up
-```
-
-### Deploy Frontend
-```bash
-cd frontend
-railway up
-```
-
-### Environment Variables for Railway
-Set these in Railway dashboard:
-- `DEBUG=False`
-- `SECRET_KEY=your-secret-key`
-- `ALLOWED_HOSTS=.railway.app`
-- `DATABASE_URL=postgresql://...` (Railway will provide)
-- `CORS_ALLOWED_ORIGINS=https://your-frontend-domain.railway.app`
-
-### Database Setup on Railway
-```bash
-# Add PostgreSQL addon in Railway dashboard
-# Run migrations
-railway run python manage.py migrate
-railway run python manage.py createsuperuser
-```
