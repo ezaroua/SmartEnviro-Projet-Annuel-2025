@@ -5,7 +5,8 @@ console.log(import.meta.env.VITE_API_URL);
 
 // Créer une instance Axios avec l'URL de base
 const apiClient = axios.create({
-  baseURL: 'https://smartenviro-production.up.railway.app/', // TODO: Should be get from the meta.env.VITE_API_URL
+  baseURL: import.meta.env.VITE_API_URL,
+  // 'https://smartenviro-production.up.railway.app/', // TODO: Should be get from the meta.env.VITE_API_URL
   headers: {
     "Content-Type": "application/json",
   },
