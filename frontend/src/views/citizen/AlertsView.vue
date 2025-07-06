@@ -27,7 +27,7 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
-import axios from 'axios'
+import apiClient from '@/api'
 
 const cities = [
   { name: 'Lyon', lat: 45.76, lon: 4.84 },
@@ -44,7 +44,7 @@ async function fetchAlerts () {
   error.value = null
   try {
     const { lat, lon } = selectedCity.value
-    const { data } = await axios.get('http://localhost:8000/api/weather/', {
+    const { data } = await apiClient.get('api/weather/', {
       params: { lat, lon }
     })
 

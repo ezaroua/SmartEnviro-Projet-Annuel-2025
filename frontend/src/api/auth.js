@@ -21,7 +21,7 @@ export const useAuthStore = defineStore('auth', {
     async login(credentials) {
       try {
         this.loading = true
-        const response = await apiClient.post('token/', credentials)
+        const response = await apiClient.post('api/token/', credentials)
         
         // Stocker les tokens
         this.token = response.data.access
@@ -46,7 +46,7 @@ export const useAuthStore = defineStore('auth', {
     async register(userData) {
       try {
         this.loading = true
-        await apiClient.post('register/', userData)
+        await apiClient.post('api/register/', userData)
         return true
       } catch (error) {
         console.error('Register error:', error)
@@ -58,7 +58,7 @@ export const useAuthStore = defineStore('auth', {
     
     async fetchUserProfile() {
       try {
-        const response = await apiClient.get('profile/')
+        const response = await apiClient.get('api/profile/')
         this.userProfile = response.data
         
         // Mettre à jour l'utilisateur dans le state et localStorage
@@ -80,7 +80,7 @@ export const useAuthStore = defineStore('auth', {
       try {
         if (!this.refreshToken) return false
         
-        const response = await apiClient.post('token/refresh/', {
+        const response = await apiClient.post('api/token/refresh/', {
           refresh: this.refreshToken
         })
         
@@ -103,7 +103,7 @@ export const useAuthStore = defineStore('auth', {
     async updateProfile(userData) {
       try {
         this.loading = true
-        const response = await apiClient.put('profile/', userData)
+        const response = await apiClient.put('api/profile/', userData)
         this.userProfile = response.data
         
         // Mettre à jour l'utilisateur dans le localStorage

@@ -12,7 +12,6 @@
             <button class="btn btn-primary" @click="goToLogin">
               Aller à la page de connexion
             </button>
-
           </div>
         </div>
 
@@ -160,7 +159,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import axios from 'axios'
+import apiClient from '@/api'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 
@@ -208,7 +207,7 @@ const handleRegister = async () => {
   try {
     isLoading.value = true
 
-    const response = await axios.post('http://localhost:8000/api/register/', userData.value)
+    const response = await apiClient.post('api/register/', userData.value)
 
     // Si le serveur répond avec 201 Created, considérer comme succès
     if (response.status === 201) {

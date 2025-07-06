@@ -34,7 +34,7 @@
             <td>{{ idx + 1 }}</td>
             <td>{{ user.username }}</td>
             <td>{{ user.email }}</td>
-            <td>{{ user.role_name }}</td>
+            <td>{{ user.role }}</td>
             <td>
               <span :class="user.is_active ? 'text-success' : 'text-danger'">
                 {{ user.is_active ? 'Oui' : 'Non' }}
@@ -71,7 +71,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import axios from 'axios'
+import apiClient from '@/api'
 
 const users = ref([])
 const error = ref('')
@@ -81,10 +81,7 @@ const roleFilter = ref('')
 async function fetchUsers() {
   error.value = ''
   try {
-    const token = localStorage.getItem('token')
-    const { data } = await axios.get('http://localhost:8000/api/users/', {
-      headers: { Authorization: `Bearer ${token}` }
-    })
+    const { data } = await apiClient.get('api/users/')
     users.value = data
   } catch (e) {
     error.value = "Erreur lors du chargement des utilisateurs."
@@ -95,10 +92,7 @@ async function fetchUsers() {
 /* Activer / Désactiver */
 async function toggleActive(user) {
   try {
-    const token = localStorage.getItem('token')
-    await axios.patch(`http://localhost:8000/api/users/${user.id}/toggle_active/`, {}, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
+    await apiClient.patch(`api/users/${user.id}/toggle_active/`, {})
     fetchUsers()
   } catch (e) {
     error.value = "Erreur lors de la mise à jour de l'utilisateur."
@@ -110,10 +104,7 @@ async function toggleActive(user) {
 async function deleteUser(user) {
   if (!confirm(`Supprimer ${user.username} ?`)) return
   try {
-    const token = localStorage.getItem('token')
-    await axios.delete(`http://localhost:8000/api/users/${user.id}/`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
+    await apiClient.delete(`api/users/${user.id}/`)
     fetchUsers()
   } catch (e) {
     error.value = "Erreur lors de la suppression de l'utilisateur."
@@ -130,7 +121,7 @@ function formatDate(dateString) {
 /* Filtrage selon rôle */
 const filteredUsers = computed(() => {
   if (!roleFilter.value) return users.value
-  return users.value.filter(user => user.role_name.toLowerCase() === roleFilter.value)
+  return users.value.filter(user => user.role === roleFilter.value)
 })
 
 onMounted(fetchUsers)

@@ -49,7 +49,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import axios from 'axios'
+import apiClient from '@/api'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -72,7 +72,7 @@ const handleLogin = async () => {
     isLoading.value = true
     errorMessage.value = ''
 
-    const response = await axios.post('http://localhost:8000/api/token/', {
+    const response = await apiClient.post('api/token/', {
       username: credentials.value.username,
       password: credentials.value.password
     })

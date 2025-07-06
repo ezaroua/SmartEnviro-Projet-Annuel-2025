@@ -1,20 +1,23 @@
-# Utiliser une image Node.js officielle
-FROM node:18
+# Frontend Production Dockerfile
+FROM node:18-alpine as build
 
-# Définir le dossier de travail
 WORKDIR /app
-
-# Copier package.json et package-lock.json
 COPY package*.json ./
-
-# Installer les dépendances
-RUN npm install
-
-# Copier tout le code source
+RUN npm ci
 COPY . .
+RUN npm run build
 
-# Exposer le port 5173 (si Vite) ou 8080 (si Vue CLI)
-EXPOSE 5173
+# Production stage
+FROM nginx:alpine
 
-# Démarrer l’application
-CMD ["npm", "run", "dev"]
+# Copy built files from build stage
+COPY --from=build /app/dist /usr/share/nginx/html
+
+# Copy nginx template
+COPY nginx.conf /etc/nginx/nginx.conf.template
+
+# Use Railway's port
+EXPOSE $PORT
+
+# Start nginx with port substitution
+CMD envsubst '${PORT}' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'

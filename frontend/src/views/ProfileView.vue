@@ -85,7 +85,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
+import apiClient from '@/api'
 
 const profile = ref({})
 const loaded  = ref(false)
@@ -101,11 +101,11 @@ async function changePassword () {
   pwdSuccess.value = ''; pwdError.value = ''; pwdLoading.value = true
 
   try {
-    await axios.patch('http://localhost:8000/api/change-password/', {
+    await apiClient.patch('api/change-password/', {
       old_password:      pwd.value.old,
       new_password:      pwd.value.new1,
       new_password_conf: pwd.value.new2
-    }, { headers: authHeader() })
+    })
 
     pwdSuccess.value = 'Mot de passe mis à jour – vous devrez vous reconnecter.'
     // vider les champs
@@ -126,15 +126,10 @@ async function changePassword () {
   }
 }
 
-function authHeader () {
-  return { Authorization:`Bearer ${localStorage.getItem('token')}` }
-}
 
 async function getProfile () {
   try {
-    const { data } = await axios.get('http://localhost:8000/api/me/', {
-      headers: authHeader()
-    })
+    const { data } = await apiClient.get('api/me/')
     profile.value = data
   } catch (e) {
     error.value = 'Impossible de charger le profil'
@@ -146,9 +141,7 @@ async function getProfile () {
 async function updateProfile () {
   try {
     error.value = ''; success.value = ''; loading.value = true
-    const { data } = await axios.patch('http://localhost:8000/api/me/', profile.value, {
-      headers: authHeader()
-    })
+    const { data } = await apiClient.patch('api/me/', profile.value)
     profile.value = data
     success.value = 'Profil mis à jour avec succès'
   } catch {
