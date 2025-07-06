@@ -8,26 +8,14 @@
 
           <div class="form-group mb-3">
             <label for="username">Nom d'utilisateur</label>
-            <input
-              type="text"
-              class="form-control"
-              id="username"
-              v-model="credentials.username"
-              required
-              placeholder="Entrez votre nom d'utilisateur"
-            />
+            <input type="text" class="form-control" id="username" v-model="credentials.username" required
+              placeholder="Entrez votre nom d'utilisateur" />
           </div>
 
           <div class="form-group mb-3">
             <label for="password">Mot de passe</label>
-            <input
-              type="password"
-              class="form-control"
-              id="password"
-              v-model="credentials.password"
-              required
-              placeholder="Entrez votre mot de passe"
-            />
+            <input type="password" class="form-control" id="password" v-model="credentials.password" required
+              placeholder="Entrez votre mot de passe" />
           </div>
 
           <div class="form-group mb-3">
@@ -68,21 +56,20 @@ const handleLogin = async () => {
     return
   }
 
-  try {
-    isLoading.value = true
-    errorMessage.value = ''
+  isLoading.value = true
+  errorMessage.value = ''
 
+  try {
     const response = await apiClient.post('api/token/', {
       username: credentials.value.username,
       password: credentials.value.password
     })
 
-    localStorage.setItem('token',  response.data.access)
-    localStorage.setItem('refresh',response.data.refresh)
-    localStorage.setItem('role',    String(response.data.role_id))   
+    localStorage.setItem('token', response.data.access)
+    localStorage.setItem('refresh', response.data.refresh)
+    localStorage.setItem('role', String(response.data.role_id))
 
     router.push(response.data.role_id === 1 ? '/dashboardAdmin' : '/dashboardCitizen')
-
 
   } catch (error) {
     console.error('Erreur login:', error)
@@ -100,8 +87,11 @@ const handleLogin = async () => {
     } else {
       errorMessage.value = 'Une erreur s\'est produite. Veuillez réessayer.'
     }
+  } finally {
+    isLoading.value = false
   }
 }
+
 </script>
 
 <style scoped>
@@ -130,9 +120,9 @@ const handleLogin = async () => {
 }
 
 .custom-link {
-  color: #0d6efd; /* bleu Bootstrap */
+  color: #0d6efd;
+  /* bleu Bootstrap */
   text-decoration: underline;
   cursor: pointer;
 }
-
 </style>
