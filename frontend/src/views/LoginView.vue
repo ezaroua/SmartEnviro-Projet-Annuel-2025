@@ -68,10 +68,10 @@ const handleLogin = async () => {
     return
   }
 
-  try {
-    isLoading.value = true
-    errorMessage.value = ''
+  isLoading.value = true
+  errorMessage.value = ''
 
+  try {
     const response = await axios.post('http://localhost:8000/api/token/', {
       username: credentials.value.username,
       password: credentials.value.password
@@ -82,7 +82,6 @@ const handleLogin = async () => {
     localStorage.setItem('role',    String(response.data.role_id))   
 
     router.push(response.data.role_id === 1 ? '/dashboardAdmin' : '/dashboardCitizen')
-
 
   } catch (error) {
     console.error('Erreur login:', error)
@@ -100,8 +99,11 @@ const handleLogin = async () => {
     } else {
       errorMessage.value = 'Une erreur s\'est produite. Veuillez réessayer.'
     }
+  } finally {
+    isLoading.value = false  
   }
 }
+
 </script>
 
 <style scoped>
