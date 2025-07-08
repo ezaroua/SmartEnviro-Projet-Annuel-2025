@@ -29,4 +29,4 @@ COPY . .
 EXPOSE 8000
 
 # Run the application with startup commands
-CMD ["sh", "-c", "python manage.py migrate --noinput && python manage.py init_db && python manage.py collectstatic --noinput && gunicorn --bind 0.0.0.0:8000 config.wsgi:application"]
+CMD ["sh", "-c", "python manage.py init_db && python manage.py collectstatic --noinput && gunicorn --bind 0.0.0.0:8000 config.wsgi:application"]
