@@ -15,9 +15,14 @@ const apiClient = axios.create({
 // Intercepteur de requête pour ajouter le token
 apiClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    const publicEndpoints = ['/api/register/', '/api/token/'];
+    const isPublicEndpoint = publicEndpoints.some(endpoint => config.url?.includes(endpoint));
+    
+    if (!isPublicEndpoint) {
+      const token = localStorage.getItem("token");
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
     return config;
   },
