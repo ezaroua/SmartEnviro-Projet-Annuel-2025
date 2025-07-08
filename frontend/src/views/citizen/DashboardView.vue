@@ -77,7 +77,7 @@
 
 <script setup>
 import { ref, computed, watch, onMounted, nextTick } from 'vue'
-import axios from 'axios'
+import apiClient from '@/api'
 import L from 'leaflet'
 import Indicator from '@/components/Indicator.vue'
 
@@ -138,9 +138,9 @@ async function fetchWeatherData() {
 
   try {
     const city = selectedCity.value
-    console.log(`Récupération météo pour ${city.name} (lat: ${city.lat}, lon: ${city.lon})`)
-
-    const response = await axios.get('http://localhost:8000/api/weather/', {
+    console.log(` Récupération météo pour ${city.name} (lat: ${city.lat}, lon: ${city.lon})`)
+    
+    const response = await apiClient.get('api/weather/', {
       params: { 
         lat: city.lat, 
         lon: city.lon 
