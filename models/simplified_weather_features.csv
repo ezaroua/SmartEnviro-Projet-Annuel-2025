@@ -1,0 +1,20 @@
+feature
+weather_code (wmo code)
+temperature_2m_max (°C)
+temperature_2m_min (°C)
+apparent_temperature_max (°C)
+apparent_temperature_min (°C)
+daylight_duration (s)
+sunshine_duration (s)
+uv_index_max ()
+uv_index_clear_sky_max ()
+wind_speed_10m_max (km/h)
+wind_gusts_10m_max (km/h)
+wind_direction_10m_dominant (°)
+shortwave_radiation_sum (MJ/m²)
+et0_fao_evapotranspiration (mm)
+day_of_year
+day_of_week
+month
+sunrise_seconds
+sunset_seconds
