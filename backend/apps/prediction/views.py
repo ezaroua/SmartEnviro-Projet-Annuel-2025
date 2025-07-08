@@ -1,50 +1,53 @@
+import requests
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
-import requests
 
 class WeatherAPIView(APIView):
+    """
+    Vue pour récupérer les données météo générales (actuelle, horaire, précipitations du jour).
+    Utilisée pour les indicateurs et le graphique des 7 jours.
+    """
     permission_classes = [AllowAny]
 
     def get(self, request):
-        # Récupération des coordonnées depuis les paramètres
         lat = request.GET.get("lat")
         lon = request.GET.get("lon")
 
         if not lat or not lon:
             return Response({"error": True, "reason": "Latitude et longitude requises"}, status=400)
 
-        # URL de l'API Open-Meteo avec toutes les données nécessaires
+        # URL pour les données météo générales (current_weather, hourly, daily precipitation_sum)
         url = (
             f"https://api.open-meteo.com/v1/forecast?"
-            f"latitude={lat}&longitude={lon}"
-            f"&current_weather=true"
-            f"&hourly=relative_humidity_2m"
-            f"&daily=precipitation_sum"
+            f"latitude={lat}&longitude={lon}"  # <-- Assurez-vous que lat et lon sont ici
+            f"&current_weather=true" 
+            f"&hourly=relative_humidity_2m" 
+            f"&daily=precipitation_sum" 
             f"&timezone=auto"
             f"&forecast_days=7"
         )
 
         try:
-            print(f"Appel API pour lat={lat}, lon={lon}")
-            print(f"URL: {url}")
-            
+            print(f"DEBUG Django API (WeatherAPIView): Appel Open-Meteo URL: {url}")
             res = requests.get(url)
+            res.raise_for_status() 
             data = res.json()
-            
-            print(f"Réponse API reçue: {len(str(data))} caractères")
-            print(f"Météo actuelle: {data.get('current_weather', {})}")
-            print(f"Précipitations quotidiennes: {data.get('daily', {}).get('precipitation_sum', [])}")
-            
+            print(f"DEBUG Django API (WeatherAPIView): Réponse JSON brute d'Open-Meteo: {data}")
             return Response(data)
 
+        except requests.exceptions.RequestException as e:
+            print(f"ERREUR Django API (WeatherAPIView): Échec de la requête Open-Meteo: {e}")
+            return Response({"error": True, "reason": f"Erreur de communication avec l'API météo externe: {e}"}, status=500)
         except Exception as e:
-            print(f"Erreur API: {str(e)}")
+            print(f"ERREUR Django API (WeatherAPIView): Erreur inattendue: {str(e)}")
             return Response({"error": True, "reason": str(e)}, status=500)
-        
 
-        # Endpoint utilisé pour le MODELE IA
+
 class WeatherDailyForIAModelAPIView(APIView):
+    """
+    Vue pour récupérer les données météo journalières complètes spécifiquement pour le modèle IA.
+    """
     permission_classes = [AllowAny]
 
     def get(self, request):
@@ -54,10 +57,10 @@ class WeatherDailyForIAModelAPIView(APIView):
         if not lat or not lon:
             return Response({"error": True, "reason": "Latitude et longitude requises"}, status=400)
 
-        # URL avec TOUS les paramètres de Daily Weather Variables
+        # URL pour les données météo journalières complètes pour le modèle IA
         url = (
             f"https://api.open-meteo.com/v1/forecast?"
-            f"latitude={lat}&longitude={lon}"
+            f"latitude={lat}&longitude={lon}"  # <-- Assurez-vous que lat et lon sont ici
             f"&daily="
             f"weathercode,"
             f"temperature_2m_max,temperature_2m_min,"
@@ -67,21 +70,23 @@ class WeatherDailyForIAModelAPIView(APIView):
             f"rain_sum,showers_sum,snowfall_sum,precipitation_sum,"
             f"precipitation_hours,precipitation_probability_max,"
             f"windspeed_10m_max,windgusts_10m_max,winddirection_10m_dominant,"
-            f"shortwave_radiation_sum,et0_fao_evapotranspiration"
+            f"shortwave_radiation_sum,et0_fao_evapotranspiration" 
             f"&timezone=auto"
             f"&forecast_days=7"
         )
 
         try:
-            print(f"Appel MODELE IA lat={lat}, lon={lon}")
-            print(f"URL: {url}")
-
+            print(f"DEBUG Django API (WeatherDailyForIAModelAPIView): Appel Open-Meteo URL: {url}")
             res = requests.get(url)
+            res.raise_for_status() 
             data = res.json()
-
-            print(f"Réponse API reçue pour IA: {len(str(data))} caractères")
+            print(f"DEBUG Django API (WeatherDailyForIAModelAPIView): Réponse JSON brute d'Open-Meteo: {data}")
             return Response(data)
 
+        except requests.exceptions.RequestException as e:
+            print(f"ERREUR Django API (WeatherDailyForIAModelAPIView): Échec de la requête Open-Meteo: {e}")
+            return Response({"error": True, "reason": f"Erreur de communication avec l'API météo externe: {e}"}, status=500)
         except Exception as e:
-            print(f"Erreur API: {str(e)}")
+            print(f"ERREUR Django API (WeatherDailyForIAModelAPIView): Erreur inattendue: {str(e)}")
             return Response({"error": True, "reason": str(e)}, status=500)
+

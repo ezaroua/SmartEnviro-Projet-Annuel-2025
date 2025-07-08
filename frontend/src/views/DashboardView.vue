@@ -115,20 +115,6 @@ const humidity     = computed(() => weatherData.value?.current?.relative_humidit
 const wind         = computed(() => weatherData.value?.current?.wind_speed_10m ?? '--')
 const precipToday  = computed(() => weatherData.value?.daily?.precipitation_sum?.[0] ?? '--')
 
-/* Graph précipitations ----------------------------------------- */
-const rainChart = computed(() => {
-  if (!weatherData.value?.daily?.precipitation_sum?.length) return { datasets: [] }
-  return {
-    labels: weatherData.value.daily.time.map(d => d.slice(5)),   // ex : 05-26
-    datasets:[{
-      label:'Pluie (mm)',
-      data: weatherData.value.daily.precipitation_sum,
-      borderColor:'#0d6efd',
-      backgroundColor:'#0d6efd33',
-      tension:.3,
-      fill:true
-    }]
-  }
-})
-const chartOptions = { responsive:true, maintainAspectRatio:false }
 </script>
+
+

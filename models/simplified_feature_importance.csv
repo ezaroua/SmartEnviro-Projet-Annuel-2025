@@ -1,0 +1,20 @@
+feature,importance
+weather_code (wmo code),0.13658482
+month,0.075497024
+sunshine_duration (s),0.055768866
+sunrise_seconds,0.053966016
+temperature_2m_max (°C),0.053080916
+uv_index_max (),0.05291922
+day_of_year,0.05276742
+wind_direction_10m_dominant (°),0.05270111
+et0_fao_evapotranspiration (mm),0.05110799
+apparent_temperature_max (°C),0.04980426
+temperature_2m_min (°C),0.048040997
+uv_index_clear_sky_max (),0.043706067
+wind_speed_10m_max (km/h),0.04310748
+wind_gusts_10m_max (km/h),0.04147231
+shortwave_radiation_sum (MJ/m²),0.04126581
+sunset_seconds,0.041265596
+apparent_temperature_min (°C),0.041160274
+daylight_duration (s),0.036828395
+day_of_week,0.02895539
