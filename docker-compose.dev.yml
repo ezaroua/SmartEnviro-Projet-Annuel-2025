@@ -9,6 +9,7 @@ services:
     environment:
       - DEBUG=True
       - DATABASE_URL=mysql://root:root@db:3306/smartcity_db
+      - AI_MODEL_URL=http://ai-model:5001
     depends_on:
       db:
         condition: service_healthy
@@ -26,6 +27,17 @@ services:
       - VITE_API_URL=http://localhost:8000
     depends_on:
       - backend
+
+  ai-model:
+    build: ./backend/model_IA
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./backend/model_IA:/app
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=True
+    restart: unless-stopped
 
   db:
     image: mysql:8.0

@@ -2,7 +2,30 @@ import requests
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
+from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
+from drf_spectacular.openapi import OpenApiTypes
 
+@extend_schema(
+    summary="Get weather data",
+    description="Retrieve general weather data (current, hourly, daily precipitation) for dashboard indicators and 7-day chart",
+    tags=["Weather"],
+    parameters=[
+        OpenApiParameter(
+            name="lat",
+            description="Latitude coordinate",
+            type=OpenApiTypes.FLOAT,
+            location=OpenApiParameter.QUERY,
+            required=True
+        ),
+        OpenApiParameter(
+            name="lon",
+            description="Longitude coordinate",
+            type=OpenApiTypes.FLOAT,
+            location=OpenApiParameter.QUERY,
+            required=True
+        )
+    ]
+)
 class WeatherAPIView(APIView):
     """
     Vue pour récupérer les données météo générales (actuelle, horaire, précipitations du jour).
@@ -44,6 +67,27 @@ class WeatherAPIView(APIView):
             return Response({"error": True, "reason": str(e)}, status=500)
 
 
+@extend_schema(
+    summary="Get daily weather data for AI model",
+    description="Retrieve comprehensive daily weather data specifically for AI model predictions",
+    tags=["Weather"],
+    parameters=[
+        OpenApiParameter(
+            name="lat",
+            description="Latitude coordinate",
+            type=OpenApiTypes.FLOAT,
+            location=OpenApiParameter.QUERY,
+            required=True
+        ),
+        OpenApiParameter(
+            name="lon",
+            description="Longitude coordinate",
+            type=OpenApiTypes.FLOAT,
+            location=OpenApiParameter.QUERY,
+            required=True
+        )
+    ]
+)
 class WeatherDailyForIAModelAPIView(APIView):
     """
     Vue pour récupérer les données météo journalières complètes spécifiquement pour le modèle IA.
