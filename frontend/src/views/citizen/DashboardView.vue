@@ -313,7 +313,7 @@ async function fetchPrediction() {
     
     console.log('Données préparées pour la prédiction:', preparedData)
 
-    const predictionResponse = await axios.post('http://127.0.0.1:5000/predict', preparedData)
+    const predictionResponse = await axios.post('http://127.0.0.1:5001/predict', preparedData)
 
     console.log('--- DEBUG API PREDICTION ---')
     console.log('Réponse complète:', predictionResponse)

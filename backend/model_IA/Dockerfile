@@ -14,13 +14,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY app.py .
 COPY preprocessing.py .
 
-# Create models directory and copy model files
-RUN mkdir -p models
-COPY simplified_xgboost_weather_model.joblib ./models/
-COPY simplified_weather_scaler.joblib ./models/
-COPY simplified_weather_features.csv ./models/
+# Copy model files (no need to create models directory since files are already in root)
+COPY simplified_xgboost_weather_model.joblib ./
+COPY simplified_weather_scaler.joblib ./
+COPY simplified_weather_features.csv ./
 
-EXPOSE 5000
+EXPOSE 5001
 
 # Command to run the application
-CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:${PORT:-5000} --workers 1 app:app"]
+CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:${PORT:-5001} --workers 1 app:app"]

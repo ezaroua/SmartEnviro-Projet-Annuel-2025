@@ -11,9 +11,9 @@ from preprocessing import preprocess_data_for_prediction
 app = Flask(__name__)
 CORS(app) # Active CORS pour permettre les requêtes depuis le front-end
 
-# Chemin vers le r  épertoire des modèles
-# Pour Docker, les modèles seront dans le dossier models local
-models_dir = os.path.join("models")
+# Chemin vers le répertoire des modèles
+# Pour Docker, les modèles seront dans le répertoire racine
+models_dir = "."
 
 # Chargement du modèle, du scaler et des noms des features au démarrage de l'application
 try:
@@ -59,4 +59,4 @@ def predict():
 
 if __name__ == '__main__':
     # Lance l'application Flask
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=5001)

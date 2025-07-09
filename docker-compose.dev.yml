@@ -9,7 +9,7 @@ services:
     environment:
       - DEBUG=True
       - DATABASE_URL=mysql://root:root@db:3306/smartcity_db
-      - AI_MODEL_URL=http://ai-model:5000
+      - AI_MODEL_URL=http://ai-model:5001
     depends_on:
       db:
         condition: service_healthy
@@ -31,7 +31,7 @@ services:
   ai-model:
     build: ./backend/model_IA
     ports:
-      - "5000:5000"
+      - "5001:5001"
     volumes:
       - ./backend/model_IA:/app
     environment:
