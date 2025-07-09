@@ -37,16 +37,22 @@
             <td>{{ user.role_name }}</td>
             <td>
               <span :class="user.is_active ? 'text-success' : 'text-danger'">
-                {{ user.is_active ? "Oui" : "Non" }}
+                {{ user.is_active ? 'Oui' : 'Non' }}
               </span>
             </td>
             <td>{{ formatDate(user.date_joined) }}</td>
             <td>
-              <button class="btn btn-sm" :class="user.is_active ? 'btn-warning' : 'btn-success'"
-                @click="toggleActive(user)">
-                {{ user.is_active ? "Désactiver" : "Activer" }}
+              <button
+                class="btn btn-sm"
+                :class="user.is_active ? 'btn-warning' : 'btn-success'"
+                @click="toggleActive(user)"
+              >
+                {{ user.is_active ? 'Désactiver' : 'Activer' }}
               </button>
-              <button class="btn btn-danger btn-sm ms-1" @click="deleteUser(user)">
+              <button
+                class="btn btn-danger btn-sm ms-1"
+                @click="deleteUser(user)"
+              >
                 Supprimer
               </button>
             </td>
@@ -64,59 +70,61 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
-import apiClient from "@/api";
+import { ref, computed, onMounted } from 'vue'
+import axios from 'axios'
 
-const users = ref([]);
-const error = ref("");
-const roleFilter = ref("");
+const users = ref([])
+const error = ref('')
+const roleFilter = ref('')
 
 /* Charger utilisateurs */
 async function fetchUsers() {
-  error.value = "";
+  error.value = ''
   try {
-    const { data } = await apiClient.get("api/users/");
-    users.value = data;
+    const token = localStorage.getItem('token')
+    const { data } = await axios.get('http://localhost:8000/api/users/', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    users.value = data
   } catch (e) {
-    error.value = "Erreur lors du chargement des utilisateurs.";
-    console.error(e);
+    error.value = "Erreur lors du chargement des utilisateurs."
+    console.error(e)
   }
-}
-
-function getUserRoleLabel(userRoleId) {
-  if (userRoleId === 1) {
-    return "citizen";
-  }
-  return "admin";
 }
 
 /* Activer / Désactiver */
 async function toggleActive(user) {
   try {
-    await apiClient.patch(`api/users/${user.id}/toggle_active/`, {});
-    fetchUsers();
+    const token = localStorage.getItem('token')
+    await axios.patch(`http://localhost:8000/api/users/${user.id}/toggle_active/`, {}, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    fetchUsers()
   } catch (e) {
-    error.value = "Erreur lors de la mise à jour de l'utilisateur.";
-    console.error(e);
+    error.value = "Erreur lors de la mise à jour de l'utilisateur."
+    console.error(e)
   }
 }
 
 /* Supprimer utilisateur */
 async function deleteUser(user) {
-  if (!confirm(`Supprimer ${user.username} ?`)) return;
+  if (!confirm(`Supprimer ${user.username} ?`)) return
   try {
-    await apiClient.delete(`api/users/${user.id}/`);
-    fetchUsers();
+    const token = localStorage.getItem('token')
+    await axios.delete(`http://localhost:8000/api/users/${user.id}/`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    fetchUsers()
   } catch (e) {
-    error.value = "Erreur lors de la suppression de l'utilisateur.";
-    console.error(e);
+    error.value = "Erreur lors de la suppression de l'utilisateur."
+    console.error(e)
   }
 }
 
 /* Format date */
 function formatDate(dateString) {
-  const date = new Date(dateString);
-  return date.toLocaleDateString();
+  const date = new Date(dateString)
+  return date.toLocaleDateString()
 }
 
 /* Filtrage selon rôle */
@@ -125,12 +133,11 @@ const filteredUsers = computed(() => {
   return users.value.filter(user => user.role_name.toLowerCase() === roleFilter.value)
 })
 
-onMounted(fetchUsers);
+onMounted(fetchUsers)
 </script>
 
 <style scoped>
-.table th,
-.table td {
+.table th, .table td {
   vertical-align: middle;
 }
 </style>
