@@ -5,18 +5,15 @@ import pandas as pd
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
-# Ajout du chemin vers le module backend pour l'importation locale
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
-
-# Importe la fonction de prétraitement depuis le module preprocessing
-from backend.model_IA.preprocessing import preprocess_data_for_prediction
+# Importe la fonction de prétraitement depuis le module preprocessing local
+from preprocessing import preprocess_data_for_prediction
 
 app = Flask(__name__)
 CORS(app) # Active CORS pour permettre les requêtes depuis le front-end
 
-# Chemin vers le répertoire des modèles
-# Assurez-vous que ce chemin est correct par rapport à l'emplacement de app.py
-models_dir = os.path.join("..", "..", "models")
+# Chemin vers le r  épertoire des modèles
+# Pour Docker, les modèles seront dans le dossier models local
+models_dir = os.path.join("models")
 
 # Chargement du modèle, du scaler et des noms des features au démarrage de l'application
 try:
