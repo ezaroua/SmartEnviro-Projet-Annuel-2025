@@ -27,20 +27,6 @@ from drf_spectacular.openapi import OpenApiTypes
 
 User = get_user_model()
 
-from rest_framework.permissions import BasePermission
-
-class IsAdminRole(BasePermission):
-    """
-    Permission class that checks if user has admin role
-    """
-    def has_permission(self, request, view):
-        return (
-            request.user 
-            and request.user.is_authenticated 
-            and hasattr(request.user, 'role') 
-            and request.user.role.name == 'admin'
-        )
-
 
 @extend_schema(
     summary="Register a new user",
@@ -117,7 +103,7 @@ class PasswordChangeView(generics.UpdateAPIView):
 class UserListView(generics.ListAPIView):
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
-    permission_classes = [IsAdminRole]
+    permission_classes = [permissions.IsAdminUser]
 
 @extend_schema(
     summary="Delete user",
@@ -127,7 +113,7 @@ class UserListView(generics.ListAPIView):
 class UserDeleteView(generics.DestroyAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAdminRole]
+    permission_classes = [permissions.IsAdminUser]
 
 @extend_schema(
     summary="Toggle user active status",
@@ -143,7 +129,7 @@ class UserDeleteView(generics.DestroyAPIView):
     ]
 )
 class UserToggleActiveView(APIView):
-    permission_classes = [IsAdminRole]
+    permission_classes = [permissions.IsAdminUser]
 
     def patch(self, request, pk):
         try:
@@ -160,7 +146,7 @@ class UserToggleActiveView(APIView):
     tags=["Admin - Dashboard"]
 )
 class AdminOverviewView(APIView):
-    permission_classes = [IsAdminRole]
+    permission_classes = [IsAdminUser]
 
     def get(self, request):
         today = timezone.now().date()
